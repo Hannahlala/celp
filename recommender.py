@@ -28,11 +28,15 @@ def recommend(user_id=None, business_id=None, city=None, n=10):
             if business['is_open'] == 1 and business['review_count'] > 9:
                 filtered_data.append(business)
     
+    
+    sorted_data = sorted(filtered_data, key=lambda k: k['stars'], reverse=True)[:11]
     sample = random.sample(filtered_data, n)
     
     # werkt dit? check of business die wordt bekeken niet ook wordt aangeraden
-    while business_id in sample:
-        print('IK BEN NU HIERRR')
-        sample = random.sample(filtered_data, n)
-
-    return sample
+    for x in sorted_data:
+        if x['business_id'] == business_id:
+        # remove item from list
+            sorted_data.remove(x)
+    
+    # let op, als er geen overlap was, geeft hij nu 11 terug ipv 10
+    return sorted_data
