@@ -15,6 +15,24 @@ def recommend(user_id=None, business_id=None, city=None, n=10):
             adress:str
         }
     """
+    # op plek x een random suggestie (weinig rating of buiten range)
+    
+    print(user_id, business_id, city, n)
     if not city:
         city = random.choice(CITIES)
-    return random.sample(BUSINESSES[city], n)
+    
+    # filter all data (nu elke keer als pagina wordt geopend, moet ooit per sessie)
+    filtered_data =[]
+    for place in CITIES:
+        for business in BUSINESSES[place]:
+            if business['is_open'] == 1 and business['review_count'] > 9:
+                filtered_data.append(business)
+    
+    sample = random.sample(filtered_data, n)
+    
+    # werkt dit? check of business die wordt bekeken niet ook wordt aangeraden
+    while business_id in sample:
+        print('IK BEN NU HIERRR')
+        sample = random.sample(filtered_data, n)
+
+    return sample
