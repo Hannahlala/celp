@@ -30,7 +30,6 @@ def recommend(user_id=None, business_id=None, city=None, n=10):
     
     
     sorted_data = sorted(filtered_data, key=lambda k: k['stars'], reverse=True)[:11]
-    sample = random.sample(filtered_data, n)
     
     # werkt dit? check of business die wordt bekeken niet ook wordt aangeraden
     for x in sorted_data:
