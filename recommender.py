@@ -38,4 +38,4 @@ def recommend(user_id=None, business_id=None, city=None, n=10):
             sorted_data.remove(x)
     
     # let op, als er geen overlap was, geeft hij nu 11 terug ipv 10
-    return sorted_data
+    return sorted_data[:10]
