@@ -15,6 +15,7 @@ def recommend(user_id=None, business_id=None, city=None, n=10):
             adress:str
         }
     """
+    # ideeën
     # op plek x een random suggestie (weinig rating of buiten range)
     
     print(user_id, business_id, city, n)
@@ -31,10 +32,9 @@ def recommend(user_id=None, business_id=None, city=None, n=10):
     
     sorted_data = sorted(filtered_data, key=lambda k: k['stars'], reverse=True)[:11]
     
-    # werkt dit? check of business die wordt bekeken niet ook wordt aangeraden
+    # Check if searched business is not also recommended, remove if yes
     for x in sorted_data:
         if x['business_id'] == business_id:
-        # remove item from list
             sorted_data.remove(x)
     
     # let op, als er geen overlap was, geeft hij nu 11 terug ipv 10
