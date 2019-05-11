@@ -23,7 +23,7 @@ def recommend(user_id=None, business_id=None, city=None, n=10):
         city = random.choice(CITIES)
     
     if not user_id:
-        # filter all data (nu elke keer als pagina wordt geopend, moet ooit per sessie)
+        # filter all data (nu elke keer als pagina wordt geopend, moet per sessie)
         filtered_data =[]
         for place in CITIES:
             for business in BUSINESSES[place]:
