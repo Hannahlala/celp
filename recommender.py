@@ -1,6 +1,7 @@
 from data import CITIES, BUSINESSES, USERS, REVIEWS, TIPS, CHECKINS
 
 import random
+import itembased
 import numpy as np
 from operator import itemgetter
 
@@ -48,7 +49,7 @@ def logout_without_business(city, n):
             if business['is_open'] == 1 and business['review_count'] > 9:
                 filtered_data.append(business)
 
-    sorted_data = sorted(filtered_data, key=itemgetter('stars'), reverse=True)[:n + 1]
+    sorted_data = sorted(filtered_data, key=itemgetter('stars'), reverse=True)[:n]
         
     # let op, als er geen overlap was, geeft hij nu 11 terug ipv 10
     return sorted_data[:n]
@@ -79,17 +80,18 @@ def logout_with_business(business_id, city, n):
 
 
 def login_without_business(user_id, city, n):
-    print("IK BEN NU HIER")
     if not city:
         city = random.choice(CITIES)
+
+    return itembased.itembase(user_id=user_id, city=city, n=n)
     
-    for review in REVIEWS[city]:
-        if review["user_id"] == user_id:
-            print("kom ik hier?")
+    #for review in REVIEWS[city]:
+     #   if review["user_id"] == user_id:
+      #      print("kom ik hier?")
 
             
-            print(review)
-    return random.sample(BUSINESSES[city], n)
+      #      print(review)
+    
 
 def login_with_business(user_id, business_id, city, n):
     if not city:
