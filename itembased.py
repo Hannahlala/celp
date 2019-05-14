@@ -10,7 +10,7 @@ import math
 from scipy.spatial import distance
 
 def itembase (user_id, city, n):
-    print("Ik ben hier dus dit gaat goed")
+    print("lets go!")
     
     frame = pd.concat([pd.DataFrame(REVIEWS[x]) for x in REVIEWS])
 
@@ -18,21 +18,36 @@ def itembase (user_id, city, n):
 
     utility_matrix = pivot_ratings(frame)
 
-    print("HALLO IK BEN NU HIER")
+    print("je bent ong halverwege...")
 
     similarity = create_similarity_matrix_euclid(utility_matrix)
 
-    print("HALLO")
+    print("we zijn er bijna")
 
     for business in BUSINESSES[city]:
         neighborhood = select_neighborhood(similarity, utility_matrix, user_id, business["business_id"])
         prediction = weighted_mean(neighborhood, utility_matrix, user_id)
-        print("voorspeling: ", prediction)
-        predictions.append([business, prediction])
+        print("normaal: ", prediction)
+        # wanneer hij hier voor de tweede keer komt, krijg ik de vollgende melding: 
+        # C:\Users\Gebruiker\Documents\GitHub\celp\itembased.py:111: RuntimeWarning: invalid value encountered in double_scalarsmean = ((utility_matrix[user_id] * neighborhood).sum())/neighborhood.sum()
+        # vervolgens lijkt hij wel gewoon door te gaan
+        # verwijder alle city's die je nu hebt staan en voeg dan Ambridge toe, dit is nl veel minder data en anders duurt het echt te lang
+        # daarbij als je meerdere citys hebt gaat het wss mis
+        # dit is omdat hij random een city pakt en dan kan het zijn dat alles nan wordt als de city niet 1 is waar de gebruiker in zit
+        # als je hem dan runt en inlogd met Jarrod zie je in de terminal dit probleem
+        predictions.append([prediction, business])
 
-    sorted_prediction = sorted(predictions, key=itemgetter(1), reverse=True)[:n]
-    print("gesorteerde voorspellingen:")
-    print(sorted_prediction)
+    # vervolgens wordt predictions wel een list met daar in lists en in elke van deze lists staat op de eerste plek de voorspelde rating
+    # en op de tweede plek een dict met alle info van het bedrijf
+    # dus dit is de vorm: [[rating, {business info}], [rating, {business info}], ect.]
+    # wanneer ik die vervolgens probeer te sorteren gebeurt er precies niks.
+    # in de terminal print hij eerst op volgorde van predictions en daarna op de volgorde van sorted_prediction
+    # en dan kun je zien dat ze hetzelfde zijn :)
+    sorted_prediction = sorted(predictions, key=lambda x: x[0])
+
+    for x in sorted_prediction:
+        print("gesorteerd: ", x[0])
+
     return random.sample(BUSINESSES[city], n)
 
 def get_rating(ratings, userId, BusinessId):
