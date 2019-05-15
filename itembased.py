@@ -28,21 +28,12 @@ def itembase (user_id, city, n):
         neighborhood = select_neighborhood(similarity, utility_matrix, user_id, business["business_id"])
         prediction = weighted_mean(neighborhood, utility_matrix, user_id)
         print("normaal: ", prediction)
-        # wanneer hij hier voor de tweede keer komt, krijg ik de vollgende melding: 
-        # C:\Users\Gebruiker\Documents\GitHub\celp\itembased.py:111: RuntimeWarning: invalid value encountered in double_scalarsmean = ((utility_matrix[user_id] * neighborhood).sum())/neighborhood.sum()
-        # vervolgens lijkt hij wel gewoon door te gaan
-        # verwijder alle city's die je nu hebt staan en voeg dan Ambridge toe, dit is nl veel minder data en anders duurt het echt te lang
-        # daarbij als je meerdere citys hebt gaat het wss mis
-        # dit is omdat hij random een city pakt en dan kan het zijn dat alles nan wordt als de city niet 1 is waar de gebruiker in zit
+        # delen door nul geeft de warning, de warning is niet erg, maar het is lelijke code volgens TA
         # als je hem dan runt en inlogd met Jarrod zie je in de terminal dit probleem
         predictions.append([prediction, business])
 
-    # vervolgens wordt predictions wel een list met daar in lists en in elke van deze lists staat op de eerste plek de voorspelde rating
-    # en op de tweede plek een dict met alle info van het bedrijf
-    # dus dit is de vorm: [[rating, {business info}], [rating, {business info}], ect.]
-    # wanneer ik die vervolgens probeer te sorteren gebeurt er precies niks.
-    # in de terminal print hij eerst op volgorde van predictions en daarna op de volgorde van sorted_prediction
-    # en dan kun je zien dat ze hetzelfde zijn :)
+    # zolang er nans in zitten kan er niet gesorteerd worden! Daarom doet hij het niet goed.
+    # Of het komt doordat het enige soorteerbare de 2.9996 is en hij deze afrond naar 3
     sorted_prediction = sorted(predictions, key=lambda x: x[0])
 
     for x in sorted_prediction:
