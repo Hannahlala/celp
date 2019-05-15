@@ -11,13 +11,22 @@ import math
 from scipy.spatial import distance
 
 def incl_city_business (user_id, business_id, city, n):
-    return random.sample(BUSINESSES[city], n)
+    print("lets go ronde 2!")
 
-def itembase (user_id, n):
-    print("lets go!")
-    
-    frame1 = pd.concat([pd.DataFrame(REVIEWS[x]) for x in REVIEWS])
-    businesses = pd.concat([pd.DataFrame(BUSINESSES[x]) for x in BUSINESSES])
+    frame1 = pd.concat([pd.DataFrame(REVIEWS[x]) for x in REVIEWS if x == city])
+
+    # get categories from specific business
+    for business1 in BUSINESSES[city]:
+        if business1["business_id"] == business_id:
+            business_cat = business1["categories"].split(', ')
+
+    businesses = pd.DataFrame()
+    # check if categories match with other businesses
+
+    for business2 in BUSINESSES[city]:
+        if any(x in business2["categories"].split(', ') for x in business_cat):
+            businesses = businesses.append(business2, ignore_index=True)
+
 
     frame = same.same(frame1)
 
@@ -40,6 +49,41 @@ def itembase (user_id, n):
     businesses = businesses.fillna(0)
     sorted_prediction = businesses.sort_values(by=['predicted rating'], ascending=False)
     sorted_prediction2 = sorted_prediction.drop(columns=['predicted rating'])
+    result = sorted_prediction2.to_dict(orient='records')
+    return result[:n]
+
+
+def itembase (user_id, n):
+    print("lets go!")
+    
+    frame1 = pd.concat([pd.DataFrame(REVIEWS[x]) for x in REVIEWS])
+    businesses = pd.concat([pd.DataFrame(BUSINESSES[x]) for x in BUSINESSES])
+
+    businesses = businesses.set_index('business_id')
+
+    frame = same.same(frame1)
+
+    utility_matrix = pivot_ratings(frame)
+    print("je bent ong halverwege...")
+
+    similarity = create_similarity_matrix_euclid(utility_matrix)
+    print("we zijn er bijna")
+    print(businesses)
+    for business in businesses.index:
+        print("deze: ", business)
+        neighborhood = select_neighborhood(similarity, utility_matrix, user_id, business)
+        prediction = weighted_mean(neighborhood, utility_matrix, user_id)
+        businesses.ix[business, 'predicted rating'] = prediction
+        # delen door nul geeft de warning, de warning is niet erg, maar het is lelijke code volgens TA
+        # als je hem dan runt en inlogd met Jarrod zie je in de terminal dit probleem
+        # predictions.append([prediction, business])
+
+    # zolang er nans in zitten kan er niet gesorteerd worden! Daarom doet hij het niet goed.
+    # Of het komt doordat het enige soorteerbare de 2.9996 is en hij deze afrond naar 3
+    businesses = businesses.fillna(0)
+    sorted_prediction = businesses.sort_values(by=['predicted rating'], ascending=False)
+    sorted_prediction2 = sorted_prediction.drop(columns=['predicted rating'])
+    sorted_prediction2 = sorted_prediction2.reset_index()
     result = sorted_prediction2.to_dict(orient='records')
     return result[:n]
 
