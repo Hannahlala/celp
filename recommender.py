@@ -85,13 +85,6 @@ def login_without_business(user_id, city, n):
 
     return itembased.itembase(user_id=user_id, city=city, n=n)
     
-    #for review in REVIEWS[city]:
-     #   if review["user_id"] == user_id:
-      #      print("kom ik hier?")
-
-            
-      #      print(review)
-    
 
 def login_with_business(user_id, business_id, city, n):
     if not city:
