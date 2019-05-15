@@ -63,7 +63,6 @@ def logout_with_business(business_id, city, n):
         if business1["business_id"] == business_id:
             business_cat = business1["categories"].split(', ')
 
-
     # check if categories match with other businesses
     filtered_data = []
     for business2 in BUSINESSES[city]:
@@ -80,11 +79,8 @@ def logout_with_business(business_id, city, n):
     return  sorted_data[:n]
 
 
-def login_without_business(user_id, city, n):
-    if not city:
-        city = random.choice(CITIES)
-
-    return itembased.itembase(user_id=user_id, city=city, n=n)
+def login_without_business(user_id, n):
+    return itembased.itembase(user_id=user_id, n=n)
     
 
 def login_with_business(user_id, business_id, city, n):

@@ -10,7 +10,7 @@ from operator import itemgetter
 import math
 from scipy.spatial import distance
 
-def itembase (user_id, city, n):
+def itembase (user_id, n):
     print("lets go!")
     
     frame = pd.concat([pd.DataFrame(REVIEWS[x]) for x in REVIEWS])
