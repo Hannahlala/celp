@@ -1,4 +1,5 @@
 import recommender
+import same
 import pandas as pd
 from data import CITIES, BUSINESSES, USERS, REVIEWS, TIPS, CHECKINS
 
@@ -13,33 +14,32 @@ def itembase (user_id, city, n):
     print("lets go!")
     
     frame = pd.concat([pd.DataFrame(REVIEWS[x]) for x in REVIEWS])
+    businesses = pd.concat([pd.DataFrame(BUSINESSES[x]) for x in BUSINESSES])
 
-    predictions = []
+    #frame = same.same(frame1)
+    # predictions = []
 
     utility_matrix = pivot_ratings(frame)
-
     print("je bent ong halverwege...")
 
     similarity = create_similarity_matrix_euclid(utility_matrix)
-
     print("we zijn er bijna")
 
-    for business in BUSINESSES[city]:
-        neighborhood = select_neighborhood(similarity, utility_matrix, user_id, business["business_id"])
+    for business in businesses.index:
+        neighborhood = select_neighborhood(similarity, utility_matrix, user_id, businesses.loc[business]["business_id"])
         prediction = weighted_mean(neighborhood, utility_matrix, user_id)
-        print("normaal: ", prediction)
+        businesses.ix[business, 'predicted rating'] = prediction
         # delen door nul geeft de warning, de warning is niet erg, maar het is lelijke code volgens TA
         # als je hem dan runt en inlogd met Jarrod zie je in de terminal dit probleem
-        predictions.append([prediction, business])
+        # predictions.append([prediction, business])
 
     # zolang er nans in zitten kan er niet gesorteerd worden! Daarom doet hij het niet goed.
     # Of het komt doordat het enige soorteerbare de 2.9996 is en hij deze afrond naar 3
-    sorted_prediction = sorted(predictions, key=lambda x: x[0])
-
-    for x in sorted_prediction:
-        print("gesorteerd: ", x[0])
-
-    return random.sample(BUSINESSES[city], n)
+    businesses = businesses.fillna(0)
+    sorted_prediction = businesses.sort_values(by=['predicted rating'], ascending=False)
+    sorted_prediction = sorted_prediction.drop(columns=['predicted rating'])
+    result = sorted_prediction.to_dict(orient='records')
+    return result[:n]
 
 def get_rating(ratings, userId, BusinessId):
     """Given a userId and BusinessId, this- function returns the corresponding rating.
