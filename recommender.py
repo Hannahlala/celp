@@ -63,6 +63,7 @@ def logout_with_business(business_id, city, n):
         if business1["business_id"] == business_id:
             business_cat = business1["categories"].split(', ')
 
+
     # check if categories match with other businesses
     filtered_data = []
     for business2 in BUSINESSES[city]:

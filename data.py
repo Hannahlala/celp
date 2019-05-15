@@ -14,12 +14,13 @@ import random
 DATA_DIR = "data"
 
 
+
 def load_cities():
     """
     Finds all cities (all directory names) in ./data
     Returns a list of city names
     """
-    return os.listdir(DATA_DIR)
+    return [city for city in os.listdir(DATA_DIR) if city.startswith(".") is False]
 
 
 def load(cities, data_filename):
