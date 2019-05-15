@@ -10,6 +10,9 @@ from operator import itemgetter
 import math
 from scipy.spatial import distance
 
+def incl_city_business ():
+    return random.sample(BUSINESSES[city], n)
+
 def itembase (user_id, n):
     print("lets go!")
     
@@ -37,8 +40,8 @@ def itembase (user_id, n):
     # Of het komt doordat het enige soorteerbare de 2.9996 is en hij deze afrond naar 3
     businesses = businesses.fillna(0)
     sorted_prediction = businesses.sort_values(by=['predicted rating'], ascending=False)
-    sorted_prediction = sorted_prediction.drop(columns=['predicted rating'])
-    result = sorted_prediction.to_dict(orient='records')
+    sorted_prediction2 = sorted_prediction.drop(columns=['predicted rating'])
+    result = sorted_prediction2.to_dict(orient='records')
     return result[:n]
 
 def get_rating(ratings, userId, BusinessId):

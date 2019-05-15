@@ -86,4 +86,4 @@ def login_without_business(user_id, n):
 def login_with_business(user_id, business_id, city, n):
     if not city:
         city = random.choice(CITIES)
-    return random.sample(BUSINESSES[city], n)
+    return itembased.incl_city_business(user_id=user_id, business_id=business_id, city=city, n=n)
