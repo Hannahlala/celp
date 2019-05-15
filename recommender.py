@@ -31,7 +31,7 @@ def recommend(user_id=None, business_id=None, city=None, n=10):
     # city = random.choice(CITIES)
     
     if not business_id:
-        return login_without_business(user_id, city, n)
+        return login_without_business(user_id, n)
     
     return login_with_business(user_id, business_id, city, n)
 
