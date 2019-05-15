@@ -10,17 +10,16 @@ from operator import itemgetter
 import math
 from scipy.spatial import distance
 
-def incl_city_business ():
+def incl_city_business (user_id, business_id, city, n):
     return random.sample(BUSINESSES[city], n)
 
 def itembase (user_id, n):
     print("lets go!")
     
-    frame = pd.concat([pd.DataFrame(REVIEWS[x]) for x in REVIEWS])
+    frame1 = pd.concat([pd.DataFrame(REVIEWS[x]) for x in REVIEWS])
     businesses = pd.concat([pd.DataFrame(BUSINESSES[x]) for x in BUSINESSES])
 
-    #frame = same.same(frame1)
-    # predictions = []
+    frame = same.same(frame1)
 
     utility_matrix = pivot_ratings(frame)
     print("je bent ong halverwege...")
