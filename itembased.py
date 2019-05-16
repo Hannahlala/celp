@@ -28,7 +28,19 @@ def incl_city_business (user_id, business_id, city, n):
             if any(x in business2["categories"].split(', ') for x in business_cat):
                 businesses = businesses.append(business2, ignore_index=True)
 
+    
+    if len(businesses) < n:
+        print("HELP, IK HEB TE WEINIG BEDRIJVEN")
+        filtered_data = []
+        for city in BUSINESSES:
+            for business in BUSINESSES[city]:
+                filtered_data.append(business)
 
+        sorted_data = sorted(filtered_data, key=itemgetter('stars'), reverse=True)[:n-len(businesses)]
+
+        for x in sorted_data:
+            businesses = businesses.append(x, ignore_index=True)
+    
     frame = same.same(frame1)
 
     utility_matrix = pivot_ratings(frame)
@@ -65,11 +77,21 @@ def itembase (user_id, n):
 
     for city in BUSINESSES:
         for business in BUSINESSES[city]:
-            print(city)
-            print(business)
             if business['is_open'] == 1 and business['review_count'] > 9:
                 businesses = businesses.append(business, ignore_index=True)
+    
+    if len(businesses) < n:
+        print("HELP, IK HEB TE WEINIG BEDRIJVEN")
+        filtered_data = []
+        for city in BUSINESSES:
+            for business in BUSINESSES[city]:
+                filtered_data.append(business)
 
+        sorted_data = sorted(filtered_data, key=itemgetter('stars'), reverse=True)[:n-len(businesses)]
+
+        for x in sorted_data:
+            businesses = businesses.append(x, ignore_index=True)
+    
     businesses = businesses.set_index('business_id')
 
     frame = same.same(frame1)
@@ -79,7 +101,7 @@ def itembase (user_id, n):
 
     similarity = create_similarity_matrix_euclid(utility_matrix)
     print("we zijn er bijna")
-    print(businesses)
+    
     for business in businesses.index:
         print("deze: ", business)
         neighborhood = select_neighborhood(similarity, utility_matrix, user_id, business)
