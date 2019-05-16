@@ -24,8 +24,9 @@ def incl_city_business (user_id, business_id, city, n):
     # check if categories match with other businesses
 
     for business2 in BUSINESSES[city]:
-        if any(x in business2["categories"].split(', ') for x in business_cat):
-            businesses = businesses.append(business2, ignore_index=True)
+        if business2['is_open'] == 1 and business2['review_count'] > 9:
+            if any(x in business2["categories"].split(', ') for x in business_cat):
+                businesses = businesses.append(business2, ignore_index=True)
 
 
     frame = same.same(frame1)
@@ -57,7 +58,17 @@ def itembase (user_id, n):
     print("lets go!")
     
     frame1 = pd.concat([pd.DataFrame(REVIEWS[x]) for x in REVIEWS])
-    businesses = pd.concat([pd.DataFrame(BUSINESSES[x]) for x in BUSINESSES])
+
+    
+    businesses = pd.DataFrame()
+    # check if categories match with other businesses
+
+    for city in BUSINESSES:
+        for business in BUSINESSES[city]:
+            print(city)
+            print(business)
+            if business['is_open'] == 1 and business['review_count'] > 9:
+                businesses = businesses.append(business, ignore_index=True)
 
     businesses = businesses.set_index('business_id')
 
