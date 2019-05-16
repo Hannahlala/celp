@@ -66,15 +66,11 @@ def logout_with_business(business_id, city, n):
     # check if categories match with other businesses
     filtered_data = []
     for business2 in BUSINESSES[city]:
-        if any(x in business2["categories"].split(', ') for x in business_cat):
-            filtered_data.append(business2)
+        if business2['business_id'] != business_id:
+            if any(x in business2["categories"].split(', ') for x in business_cat):
+                filtered_data.append(business2)
 
     sorted_data = sorted(filtered_data, key=itemgetter('stars'), reverse=True)[:n + 1]
-
-    # prevents the specific business from displaying twice
-    for x in sorted_data:
-        if x['business_id'] == business_id:
-            sorted_data.remove(x)
 
     return  sorted_data[:n]
 
