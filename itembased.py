@@ -10,8 +10,7 @@ from operator import itemgetter
 import math
 from scipy.spatial import distance
 
-def incl_city_business (user_id, business_id, city, n):
-    print("lets go ronde 2!")
+def incl_city_business (user_id, business_id, city):
 
     frame1 = pd.concat([pd.DataFrame(REVIEWS[x]) for x in REVIEWS if x == city])
 
@@ -28,27 +27,12 @@ def incl_city_business (user_id, business_id, city, n):
             if business2['is_open'] == 1 and business2['review_count'] > 9:
                 if any(x in business2["categories"].split(', ') for x in business_cat):
                     businesses = businesses.append(business2, ignore_index=True)
-
-    
-    if len(businesses) < n:
-        print("HELP, IK HEB TE WEINIG BEDRIJVEN")
-        filtered_data = []
-        for city in BUSINESSES:
-            for business in BUSINESSES[city]:
-                filtered_data.append(business)
-
-        sorted_data = sorted(filtered_data, key=itemgetter('stars'), reverse=True)[:n-len(businesses)]
-
-        for x in sorted_data:
-            businesses = businesses.append(x, ignore_index=True)
     
     frame = same.same(frame1)
 
     utility_matrix = pivot_ratings(frame)
-    print("je bent ong halverwege...")
 
     similarity = create_similarity_matrix_euclid(utility_matrix)
-    print("we zijn er bijna")
 
     for business in businesses.index:
         neighborhood = select_neighborhood(similarity, utility_matrix, user_id, businesses.loc[business]["business_id"])
@@ -64,11 +48,10 @@ def incl_city_business (user_id, business_id, city, n):
     sorted_prediction = businesses.sort_values(by=['predicted rating'], ascending=False)
     sorted_prediction2 = sorted_prediction.drop(columns=['predicted rating'])
     result = sorted_prediction2.to_dict(orient='records')
-    return result[:n]
+    return result
 
 
-def itembase (user_id, n):
-    print("lets go!")
+def itembase (user_id):
     
     frame1 = pd.concat([pd.DataFrame(REVIEWS[x]) for x in REVIEWS])
 
@@ -81,27 +64,13 @@ def itembase (user_id, n):
             if business['is_open'] == 1 and business['review_count'] > 9:
                 businesses = businesses.append(business, ignore_index=True)
     
-    if len(businesses) < n:
-        print("HELP, IK HEB TE WEINIG BEDRIJVEN")
-        filtered_data = []
-        for city in BUSINESSES:
-            for business in BUSINESSES[city]:
-                filtered_data.append(business)
-
-        sorted_data = sorted(filtered_data, key=itemgetter('stars'), reverse=True)[:n-len(businesses)]
-
-        for x in sorted_data:
-            businesses = businesses.append(x, ignore_index=True)
-    
     businesses = businesses.set_index('business_id')
 
     frame = same.same(frame1)
 
     utility_matrix = pivot_ratings(frame)
-    print("je bent ong halverwege...")
 
     similarity = create_similarity_matrix_euclid(utility_matrix)
-    print("we zijn er bijna")
     
     for business in businesses.index:
         print("deze: ", business)
@@ -119,7 +88,7 @@ def itembase (user_id, n):
     sorted_prediction2 = sorted_prediction.drop(columns=['predicted rating'])
     sorted_prediction2 = sorted_prediction2.reset_index()
     result = sorted_prediction2.to_dict(orient='records')
-    return result[:n]
+    return result
 
 def get_rating(ratings, userId, BusinessId):
     """Given a userId and BusinessId, this- function returns the corresponding rating.

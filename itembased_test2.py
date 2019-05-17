@@ -11,7 +11,7 @@ import math
 from scipy.spatial import distance
 
 
-def itembase(user_id, n):
+def itembase(user_id):
     frame1 = pd.concat([pd.DataFrame(REVIEWS[x]) for x in REVIEWS])
 
     businesses = pd.DataFrame()
@@ -21,17 +21,6 @@ def itembase(user_id, n):
         for business in BUSINESSES[city]:
             if business['is_open'] == 1 and business['review_count'] > 9:
                 businesses = businesses.append(business, ignore_index=True)
-
-    if len(businesses) < n:
-        filtered_data = []
-        for city in BUSINESSES:
-            for business in BUSINESSES[city]:
-                filtered_data.append(business)
-
-        sorted_data = sorted(filtered_data, key=itemgetter('stars'), reverse=True)[:n - len(businesses)]
-
-        for x in sorted_data:
-            businesses = businesses.append(x, ignore_index=True)
 
     businesses = businesses.set_index('business_id')
 
@@ -55,7 +44,7 @@ def itembase(user_id, n):
     sorted_prediction = businesses.sort_values(by=['predicted rating'], ascending=False)
     sorted_prediction2 = sorted_prediction.reset_index()
     result = sorted_prediction2.to_dict(orient='records')
-    return result[:n]
+    return result
 
 
 def get_rating(ratings, userId, BusinessId):

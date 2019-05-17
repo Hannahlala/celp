@@ -27,16 +27,15 @@ def shower():
     return [frame_no_ratings, user_rating_frame]
 
 
-def start(user_id, n):
-    predicted = test1(user_id, n)
+def start(user_id):
+    predicted = test1(user_id)
     all_rating = all_ratings_user(user_id)
-    mse_for_realzies = mse(all_rating, predicted)
-    # print(mse_for_realzies)
+    mse_for_realzies = mse(user_id)
     return mse_for_realzies
 
 
-def test1(user_id, n):
-    framed = pd.DataFrame(itembased_test2.itembase(user_id=user_id, n=n))
+def test1(user_id):
+    framed = pd.DataFrame(itembased_test2.itembase(user_id=user_id))
 
     return framed
 
@@ -49,17 +48,17 @@ def all_ratings_user(user_id):
     return correct_user
 
 
-def ratings_together(user_id, n):
-    allpredicted = test1(user_id, n)
+def ratings_together(user_id):
+    allpredicted = test1(user_id)
     realreview = all_ratings_user(user_id)
     allpredicted.append(realreview['stars'])
 
     return allpredicted
 
 
-def mse(user_id, n):
+def mse(user_id):
     # add rows to test data
-    together_frame = ratings_together(user_id, n)
+    together_frame = ratings_together(user_id)
     together_frame['difference'] = together_frame['stars'] - together_frame['predicted rating']
     together_frame["squared difference"] = together_frame['difference'] ** 2
 

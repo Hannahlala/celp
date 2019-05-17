@@ -31,7 +31,7 @@ def recommend(user_id=None, business_id=None, city=None, n=10):
     # city = random.choice(CITIES)
     
     if not business_id:
-        test = check.start(user_id, n)
+        test = check.start(user_id)
         print(test)
         return login_without_business(user_id, n)
     
@@ -78,10 +78,10 @@ def logout_with_business(business_id, city, n):
 
 
 def login_without_business(user_id, n):
-    return itembased.itembase(user_id=user_id, n=n)
+    return itembased.itembase(user_id=user_id)[:n]
     
 
 def login_with_business(user_id, business_id, city, n):
     if not city:
         city = random.choice(CITIES)
-    return itembased.incl_city_business(user_id=user_id, business_id=business_id, city=city, n=n)
+    return itembased.incl_city_business(user_id=user_id, business_id=business_id, city=city)[:n]
