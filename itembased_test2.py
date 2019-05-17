@@ -53,6 +53,7 @@ def incl_city_business(user_id, business_id, city):
 
 def itembase(user_id):
     frame1 = pd.concat([pd.DataFrame(REVIEWS[x]) for x in REVIEWS])
+    newframe1 = frame1[frame1["useful"] > 0]
 
     businesses = pd.DataFrame()
     # check if categories match with other businesses
@@ -64,7 +65,7 @@ def itembase(user_id):
 
     businesses = businesses.set_index('business_id')
 
-    frame = same.same(frame1)
+    frame = same.same(newframe1)
 
     utility_matrix = pivot_ratings(frame)
 
