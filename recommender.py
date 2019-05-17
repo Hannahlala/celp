@@ -2,7 +2,7 @@ from data import CITIES, BUSINESSES, USERS, REVIEWS, TIPS, CHECKINS
 
 import random
 import itembased
-import numpy as np
+import check
 from operator import itemgetter
 
 
@@ -31,6 +31,8 @@ def recommend(user_id=None, business_id=None, city=None, n=10):
     # city = random.choice(CITIES)
     
     if not business_id:
+        test = check.start(user_id, n)
+        print(test)
         return login_without_business(user_id, n)
     
     return login_with_business(user_id, business_id, city, n)
