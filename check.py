@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-import itembased_test
+import itembased_test2
 from data import REVIEWS
 
 
@@ -36,7 +36,7 @@ def start(user_id, n):
 
 
 def test1(user_id, n):
-    framed = pd.DataFrame(itembased_test.itembase(user_id=user_id, n=n))
+    framed = pd.DataFrame(itembased_test2.itembase(user_id=user_id, n=n))
 
     return framed
 
