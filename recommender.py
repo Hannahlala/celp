@@ -32,8 +32,10 @@ def recommend(user_id=None, business_id=None, city=None, n=10):
     
     if not business_id:
         test = check.start(user_id)
-        print(test)
         return login_without_business(user_id, n)
+    else:
+        test = check.start(user_id)
+        return login_with_business(user_id, business_id, city, n)
     
     return login_with_business(user_id, business_id, city, n)
 

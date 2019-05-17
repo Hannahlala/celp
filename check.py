@@ -64,7 +64,7 @@ def mse(user_id):
 
     # cumpute mean square error
     sum_of_squared = together_frame["squared difference"].sum()
-    divided_by_N = len(together_frame['difference'])
-    mse = sum_of_squared / divided_by_N
+    length_reviews_user = len(together_frame['difference'])
+    mse = sum_of_squared / length_reviews_user
 
-    return mse
+    return [mse, length_reviews_user]
