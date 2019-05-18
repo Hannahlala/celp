@@ -49,6 +49,8 @@ def all_ratings_user(user_id):
 
 
 def ratings_together(user_id):
+    """creates dataframe with actual and predicted review"""
+
     allpredicted = test1(user_id)
     realreview = all_ratings_user(user_id)
     allpredicted.append(realreview['stars'])
@@ -57,14 +59,10 @@ def ratings_together(user_id):
 
 
 def mse(user_id):
-    # add rows to test data
-    together_frame = ratings_together(user_id)
-    together_frame['difference'] = together_frame['stars'] - together_frame['predicted rating']
-    together_frame["squared difference"] = together_frame['difference'] ** 2
+    """computes the mean square error between actual ratings and predicted ratings"""
 
-    # cumpute mean square error
-    sum_of_squared = together_frame["squared difference"].sum()
-    length_reviews_user = len(together_frame['difference'])
-    mse = sum_of_squared / length_reviews_user
+    allpredicted = ratings_together(user_id)
+    diff = allpredicted['stars'] - allpredicted['predicted rating']
+    length_reviews_user = len(diff)
 
-    return [mse, length_reviews_user]
+    return [(diff ** 2).mean(), length_reviews_user]

@@ -1,5 +1,4 @@
 import recommender
-import same
 import pandas as pd
 from data import CITIES, BUSINESSES, USERS, REVIEWS, TIPS, CHECKINS
 
@@ -28,9 +27,9 @@ def incl_city_business(user_id, business_id, city):
                 if any(x in business2["categories"].split(', ') for x in business_cat):
                     businesses = businesses.append(business2, ignore_index=True)
 
-    frame = same.same(frame1)
+    frame2 = frame1.drop_duplicates(subset=["user_id","business_id"], keep='last', inplace=False)
 
-    utility_matrix = pivot_ratings(frame)
+    utility_matrix = pivot_ratings(frame2)
 
     similarity = create_similarity_matrix_euclid(utility_matrix)
 
@@ -53,7 +52,6 @@ def incl_city_business(user_id, business_id, city):
 
 def itembase(user_id):
     frame1 = pd.concat([pd.DataFrame(REVIEWS[x]) for x in REVIEWS])
-    newframe1 = frame1[frame1["useful"] > 0]
 
     businesses = pd.DataFrame()
     # check if categories match with other businesses
@@ -65,9 +63,9 @@ def itembase(user_id):
 
     businesses = businesses.set_index('business_id')
 
-    frame = same.same(newframe1)
+    frame2 = frame1.drop_duplicates(subset=["user_id","business_id"], keep='last', inplace=False)
 
-    utility_matrix = pivot_ratings(frame)
+    utility_matrix = pivot_ratings(frame2)
 
     similarity = create_similarity_matrix_euclid(utility_matrix)
 
