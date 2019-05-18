@@ -1,63 +1,46 @@
 import recommender
-import same
 import pandas as pd
 from data import CITIES, BUSINESSES, USERS, REVIEWS, TIPS, CHECKINS
 
-import random
 import numpy as np
 from operator import itemgetter
 
 import math
-from scipy.spatial import distance
 
-def incl_city_business (user_id, business_id, city):
-
+def incl_city_business(user_id, business_id, city):
+    """creates combination of item based and content based recommender system"""
     frame1 = pd.concat([pd.DataFrame(REVIEWS[x]) for x in REVIEWS if x == city])
+    businesses = pd.DataFrame()
 
-    # get categories from specific business
     for business1 in BUSINESSES[city]:
         if business1["business_id"] == business_id:
             business_cat = business1["categories"].split(', ')
-
-    businesses = pd.DataFrame()
-    # check if categories match with other businesses
 
     for business2 in BUSINESSES[city]:
         if business2['business_id'] != business_id:
             if business2['is_open'] == 1 and business2['review_count'] > 9:
                 if any(x in business2["categories"].split(', ') for x in business_cat):
                     businesses = businesses.append(business2, ignore_index=True)
-    
-    frame = same.same(frame1)
 
-    utility_matrix = pivot_ratings(frame)
-
+    # drop first reviews when user reviewed company more then once
+    frame2 = frame1.drop_duplicates(subset=["user_id","business_id"], keep='last', inplace=False)
+    utility_matrix = pivot_reviews(frame2)
     similarity = create_similarity_matrix_euclid(utility_matrix)
 
     for business in businesses.index:
         neighborhood = select_neighborhood(similarity, utility_matrix, user_id, businesses.loc[business]["business_id"])
         prediction = weighted_mean(neighborhood, utility_matrix, user_id)
         businesses.ix[business, 'predicted rating'] = prediction
-        # delen door nul geeft de warning, de warning is niet erg, maar het is lelijke code volgens TA
-        # als je hem dan runt en inlogd met Jarrod zie je in de terminal dit probleem
-        # predictions.append([prediction, business])
 
-    # zolang er nans in zitten kan er niet gesorteerd worden! Daarom doet hij het niet goed.
-    # Of het komt doordat het enige soorteerbare de 2.9996 is en hij deze afrond naar 3
-    businesses = businesses.fillna(0)
     sorted_prediction = businesses.sort_values(by=['predicted rating'], ascending=False)
     sorted_prediction2 = sorted_prediction.drop(columns=['predicted rating'])
-    result = sorted_prediction2.to_dict(orient='records')
-    return result
+    return sorted_prediction2.to_dict(orient='records')
 
 
-def itembase (user_id):
-    
+def itembase(user_id):
+    """creates item based recommender system"""
     frame1 = pd.concat([pd.DataFrame(REVIEWS[x]) for x in REVIEWS])
-
-    
     businesses = pd.DataFrame()
-    # check if categories match with other businesses
 
     for city in BUSINESSES:
         for business in BUSINESSES[city]:
@@ -65,64 +48,50 @@ def itembase (user_id):
                 businesses = businesses.append(business, ignore_index=True)
     
     businesses = businesses.set_index('business_id')
-
-    frame = same.same(frame1)
-
-    utility_matrix = pivot_ratings(frame)
-
+    frame2 = frame1.drop_duplicates(subset=["user_id","business_id"], keep='last', inplace=False)
+    utility_matrix = pivot_reviews(frame2)
     similarity = create_similarity_matrix_euclid(utility_matrix)
     
     for business in businesses.index:
-        print("deze: ", business)
         neighborhood = select_neighborhood(similarity, utility_matrix, user_id, business)
         prediction = weighted_mean(neighborhood, utility_matrix, user_id)
         businesses.ix[business, 'predicted rating'] = prediction
-        # delen door nul geeft de warning, de warning is niet erg, maar het is lelijke code volgens TA
-        # als je hem dan runt en inlogd met Jarrod zie je in de terminal dit probleem
-        # predictions.append([prediction, business])
 
-    # zolang er nans in zitten kan er niet gesorteerd worden! Daarom doet hij het niet goed.
-    # Of het komt doordat het enige soorteerbare de 2.9996 is en hij deze afrond naar 3
-    businesses = businesses.fillna(0)
     sorted_prediction = businesses.sort_values(by=['predicted rating'], ascending=False)
     sorted_prediction2 = sorted_prediction.drop(columns=['predicted rating'])
     sorted_prediction2 = sorted_prediction2.reset_index()
-    result = sorted_prediction2.to_dict(orient='records')
-    return result
+    return sorted_prediction2.to_dict(orient='records')
 
-def get_rating(ratings, userId, BusinessId):
-    """Given a userId and BusinessId, this- function returns the corresponding rating.
-      Should return NaN if no rating exists."""
-    rating = ratings[(ratings['business_id'] == BusinessId) & (ratings['user_id'] == userId)]
+def get_review(reviews, userId, BusinessId):
+    """Given a userId and BusinessId, this function returns the corresponding review.
+      Should return NaN if no review exists."""
+    reviews = reviews[(reviews['business_id'] == BusinessId) & (reviews['user_id'] == userId)]
     
-    if rating.empty:
+    if reviews.empty:
         return np.nan
-    elif len(rating) > 1:
-        return float(rating['stars'].max())
+    elif len(reviews) > 1:
+        return float(reviews['stars'].max())
     else:
-        return float(rating['stars'])
+        return float(reviews['stars'])
 
-def pivot_ratings(ratings):
-    """ takes a rating table as input and computes the utility matrix """
-    # get business and user id's
-    businessIds = ratings['business_id'].unique()
-    userIds = ratings['user_id'].unique()
-    
-    # create empty data frame
+def pivot_reviews(reviews):
+    """takes a review table as input and computes the utility matrix"""
+
+    businessIds = reviews['business_id'].unique()
+    userIds = reviews['user_id'].unique()
+
     pivot_data = pd.DataFrame(np.nan, columns=userIds, index=businessIds, dtype=float)
-    
-    # use the function get_rating to fill the matrix
+
     for user in userIds:
         for business in businessIds:
-            pivot_data.loc[business][user] = get_rating(ratings, user, business)
+            pivot_data.loc[business][user] = get_review(reviews, user, business)
     
     return pivot_data
 
 def similarity_euclid(matrix, business1, business2):
-    # only take the features that have values for both id1 and id2
+    # only take the features that have values for both businesses
     selected_features = matrix.loc[business1].notna() & matrix.loc[business2].notna()
-    
-    # if no matching features, return NaN
+
     if not selected_features.any():
         return 0
 
@@ -131,13 +100,11 @@ def similarity_euclid(matrix, business1, business2):
     features2 = matrix.loc[business2][selected_features]
 
     # compute the distances for the features
-    distance = math.sqrt(((features1 - features2) ** 2 ).sum())
-    
-    # if no distance could be computed (no shared features) return a similarity of 0
+    distance = math.sqrt(((features1 - features2) ** 2).sum())
+
     if distance is np.nan:
         return 0
-    
-    # else return similarity
+
     return 1 / (1 + distance)
 
 def create_similarity_matrix_euclid(matrix):
@@ -154,12 +121,12 @@ def select_neighborhood(similarity_matrix, utility_matrix, target_user, target_b
     """selects all items with similarity > 0"""
     items_dict ={}
     new_matrix = utility_matrix[target_user].dropna()
+
     for business in new_matrix.index:
         if new_matrix[business] and similarity_matrix[business][target_business] > 0:
             items_dict[business] = similarity_matrix[business][target_business]
-    items = pd.Series(items_dict) 
-    return items
+
+    return pd.Series(items_dict)
 
 def weighted_mean(neighborhood, utility_matrix, user_id):
-    mean = ((utility_matrix[user_id] * neighborhood).sum())/neighborhood.sum()
-    return mean
+    return ((utility_matrix[user_id] * neighborhood).sum())/neighborhood.sum()
