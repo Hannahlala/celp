@@ -19,16 +19,11 @@ def recommend(user_id=None, business_id=None, city=None, n=10):
             adress:str
         }
     """
-    # ideeën
-    # op plek x een random suggestie (weinig rating of buiten range)
-    
-    print(user_id, business_id, city, n)
     if not user_id:
         if not business_id:
             return logout_without_business(city, n)
 
         return logout_with_business(business_id, city, n)
-    # city = random.choice(CITIES)
     
     if not business_id:
         test = check.start(user_id)
@@ -40,7 +35,7 @@ def recommend(user_id=None, business_id=None, city=None, n=10):
     return login_with_business(user_id, business_id, city, n)
 
 def logout_without_business(city, n):
-    # filter all data (nu elke keer als pagina wordt geopend, moet ooit per sessie)
+    """filter all data and sort by highest stars"""
     filtered_data = []
     if not city:
         for place in CITIES:
@@ -53,15 +48,13 @@ def logout_without_business(city, n):
             if business['is_open'] == 1 and business['review_count'] > 9:
                 filtered_data.append(business)
 
-    sorted_data = sorted(filtered_data, key=itemgetter('stars'), reverse=True)[:n]
-        
-    # let op, als er geen overlap was, geeft hij nu 11 terug ipv 10
+    sorted_data = sorted(filtered_data, key=itemgetter('stars'), reverse=True)
+
     return sorted_data[:n]
 
 def logout_with_business(business_id, city, n):
-    if not city:
-        city = random.choice(CITIES)
-    
+    """filter all data on categories and sort by highest stars"""
+
     # get categories from specific business
     for business1 in BUSINESSES[city]:
         if business1["business_id"] == business_id:
@@ -74,9 +67,9 @@ def logout_with_business(business_id, city, n):
             if any(x in business2["categories"].split(', ') for x in business_cat):
                 filtered_data.append(business2)
 
-    sorted_data = sorted(filtered_data, key=itemgetter('stars'), reverse=True)[:n + 1]
+    sorted_data = sorted(filtered_data, key=itemgetter('stars'), reverse=True)
 
-    return  sorted_data[:n]
+    return sorted_data[:n]
 
 
 def login_without_business(user_id, n):
@@ -84,6 +77,4 @@ def login_without_business(user_id, n):
     
 
 def login_with_business(user_id, business_id, city, n):
-    if not city:
-        city = random.choice(CITIES)
     return itembased.incl_city_business(user_id=user_id, business_id=business_id, city=city)[:n]
