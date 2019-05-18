@@ -7,6 +7,7 @@ from operator import itemgetter
 
 import math
 
+
 def incl_city_business(user_id, business_id, city):
     """creates combination of item based and content based recommender system"""
     frame1 = pd.concat([pd.DataFrame(REVIEWS[x]) for x in REVIEWS if x == city])
@@ -40,18 +41,14 @@ def incl_city_business(user_id, business_id, city):
 def itembase(user_id):
     """creates item based recommender system"""
     frame1 = pd.concat([pd.DataFrame(REVIEWS[x]) for x in REVIEWS])
-    businesses = pd.DataFrame()
-
-    for city in BUSINESSES:
-        for business in BUSINESSES[city]:
-            if business['is_open'] == 1 and business['review_count'] > 9:
-                businesses = businesses.append(business, ignore_index=True)
-    
-    businesses = businesses.set_index('business_id')
+    filtered_data = recommender.filtering_not_city()
+    businesses = pd.DataFrame(filtered_data).set_index('business_id')
     frame2 = frame1.drop_duplicates(subset=["user_id","business_id"], keep='last', inplace=False)
-    utility_matrix = pivot_reviews(frame2)
-    similarity = create_similarity_matrix_euclid(utility_matrix)
     
+    utility_matrix = pivot_reviews(frame2)
+
+    similarity = create_similarity_matrix_euclid(utility_matrix)
+
     for business in businesses.index:
         neighborhood = select_neighborhood(similarity, utility_matrix, user_id, business)
         prediction = weighted_mean(neighborhood, utility_matrix, user_id)

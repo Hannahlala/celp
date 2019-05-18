@@ -1,7 +1,8 @@
 from data import CITIES, BUSINESSES, USERS, REVIEWS, TIPS, CHECKINS
 
-import random
+import pandas as pd
 import itembased
+import random
 import check
 from operator import itemgetter
 
@@ -19,34 +20,37 @@ def recommend(user_id=None, business_id=None, city=None, n=10):
             adress:str
         }
     """
+
+    # user_id isn't given
     if not user_id:
+        # business_id isn't given
         if not business_id:
             return logout_without_business(city, n)
+        # business_id is given
+        else:
+            return logout_with_business(business_id, city, n)
 
-        return logout_with_business(business_id, city, n)
-    
-    if not business_id:
-        test = check.start(user_id)
-        return login_without_business(user_id, n)
+    # user_id is given
+    # runs tests
     else:
-        test = check.start(user_id)
+        # business_id isn't given
+        if not business_id:
+            test = check.start(user_id)
+            return login_without_business(user_id, n)
+        # business_id is given
+        else:
+            test = check.start(user_id)
+            return login_with_business(user_id, business_id, city, n)
+        
         return login_with_business(user_id, business_id, city, n)
-    
-    return login_with_business(user_id, business_id, city, n)
 
 def logout_without_business(city, n):
     """filter all data and sort by highest stars"""
-    filtered_data = []
     if not city:
-        for place in CITIES:
-            for business in BUSINESSES[place]:
-                if business['is_open'] == 1 and business['review_count'] > 9:
-                    filtered_data.append(business)
+        filtered_data = filtering_not_city()    
     
     else:
-        for business in BUSINESSES[city]:
-            if business['is_open'] == 1 and business['review_count'] > 9:
-                filtered_data.append(business)
+        filtered_data = filtering_city()
 
     sorted_data = sorted(filtered_data, key=itemgetter('stars'), reverse=True)
 
@@ -78,3 +82,23 @@ def login_without_business(user_id, n):
 
 def login_with_business(user_id, business_id, city, n):
     return itembased.incl_city_business(user_id=user_id, business_id=business_id, city=city)[:n]
+
+def filtering_not_city():
+    " Filtering data if there's no city"
+    filtered_data = []
+
+    for place in CITIES:
+            for business in BUSINESSES[place]:
+                if business['is_open'] == 1 and business['review_count'] > 9:
+                    filtered_data.append(business)
+    return filtered_data
+
+def filtering_city():
+    " Filtering data if there's a city"
+    filtered_data = []
+
+    for business in BUSINESSES[place]:
+        if business['is_open'] == 1 and business['review_count'] > 9:
+            filtered_data.append(business)
+    return filtered_data
+    
