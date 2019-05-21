@@ -64,12 +64,19 @@ def logout_with_business(business_id, city, n):
 
     # check if categories match with other businesses
     filtered_data = []
+    perfect_match = []
     for business2 in BUSINESSES[city]:
         if business2['business_id'] != business_id:
-            if any(x in business2["categories"].split(', ') for x in business_cat):
-                filtered_data.append(business2)
+            if business2['is_open'] == 1 and business2['review_count'] > 9:
+                if all(x in business2["categories"].split(', ') for x in business_cat):
+                    perfect_match.append(business2)
+                if any(x in business2["categories"].split(', ') for x in
+                       business_cat) and business2 not in perfect_match:
+                    filtered_data.append(business2)
 
+    sorted_perfect_match = sorted(perfect_match, key=itemgetter('stars'), reverse=True)
     sorted_data = sorted(filtered_data, key=itemgetter('stars'), reverse=True)
+    sorted_data[0:1] = sorted_perfect_match
 
     return sorted_data[:n]
 
