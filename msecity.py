@@ -11,6 +11,6 @@ for city in CITIES:
         users_getal += b
         if not np.isnan(a):
                 mse_getal += a * b
-                print(user["user_id"], mse_getal/users_getal)
+                print(user["user_id"],mse_getal/users_getal)
 
 print(mse_getal/(users_getal-1))
