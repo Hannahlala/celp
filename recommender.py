@@ -35,11 +35,9 @@ def recommend(user_id=None, business_id=None, city=None, n=10):
     else:
         # business_id isn't given
         if not business_id:
-            test = check.start(user_id)
             return login_without_business(user_id, n)
         # business_id is given
         else:
-            test = check.start(user_id)
             return login_with_business(user_id, business_id, city, n)
         
         return login_with_business(user_id, business_id, city, n)
@@ -81,6 +79,7 @@ def login_without_business(user_id, n):
     
 
 def login_with_business(user_id, business_id, city, n):
+    print(start(user_id=user_id, business_id=business_id, city=city))
     return itembased.incl_city_business(user_id=user_id, business_id=business_id, city=city)[:n]
 
 def filtering_not_city():
