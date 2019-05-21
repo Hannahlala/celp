@@ -35,7 +35,9 @@ def incl_city_business(user_id, business_id, city):
 
     sorted_prediction = businesses.sort_values(by=['predicted rating'], ascending=False)
     sorted_prediction2 = sorted_prediction.drop(columns=['predicted rating'])
-    return sorted_prediction2.to_dict(orient='records')
+    sorted_prediction2 = sorted_prediction2.reset_index()
+    sorted_prediction3 =sorted_prediction.reset_index()
+    return sorted_prediction2.to_dict(orient='records'), sorted_prediction3.to_dict(orient='records')
 
 
 def itembase(user_id):
@@ -57,7 +59,8 @@ def itembase(user_id):
     sorted_prediction = businesses.sort_values(by=['predicted rating'], ascending=False)
     sorted_prediction2 = sorted_prediction.drop(columns=['predicted rating'])
     sorted_prediction2 = sorted_prediction2.reset_index()
-    return sorted_prediction2.to_dict(orient='records')
+    sorted_prediction3 =sorted_prediction.reset_index()
+    return sorted_prediction2.to_dict(orient='records'), sorted_prediction3.to_dict(orient='records')
 
 def get_review(reviews, userId, BusinessId):
     """Given a userId and BusinessId, this function returns the corresponding review.
@@ -126,4 +129,7 @@ def select_neighborhood(similarity_matrix, utility_matrix, target_user, target_b
     return pd.Series(items_dict)
 
 def weighted_mean(neighborhood, utility_matrix, user_id):
-    return ((utility_matrix[user_id] * neighborhood).sum())/neighborhood.sum()
+    if neighborhood.sum() != 0:
+        return ((utility_matrix[user_id] * neighborhood).sum()) / neighborhood.sum()
+    else:
+        return 0

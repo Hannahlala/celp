@@ -75,12 +75,13 @@ def logout_with_business(business_id, city, n):
 
 
 def login_without_business(user_id, n):
-    return itembased.itembase(user_id=user_id)[:n]
+    x, y = itembased.itembase(user_id=user_id)
+    return x[:n]
     
 
 def login_with_business(user_id, business_id, city, n):
-    print(start(user_id=user_id, business_id=business_id, city=city))
-    return itembased.incl_city_business(user_id=user_id, business_id=business_id, city=city)[:n]
+    x, y = itembased.incl_city_business(user_id=user_id, business_id=business_id, city=city)
+    return x[:n]
 
 def filtering_not_city():
     " Filtering data if there's no city"

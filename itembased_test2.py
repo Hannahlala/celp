@@ -162,5 +162,7 @@ def select_neighborhood(similarity_matrix, utility_matrix, target_user, target_b
 
 
 def weighted_mean(neighborhood, utility_matrix, user_id):
-    mean = ((utility_matrix[user_id] * neighborhood).sum()) / neighborhood.sum()
-    return mean
+    if neighborhood.sum() != 0:
+        return ((utility_matrix[user_id] * neighborhood).sum()) / neighborhood.sum()
+    else:
+        return 0

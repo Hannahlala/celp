@@ -1,21 +1,23 @@
 from data import CITIES, BUSINESSES, USERS, REVIEWS, TIPS, CHECKINS
 from check import mse
 import pandas as pd
-import itembased_test2
 import itembased
 import random
+import numpy as np
 
 mse_getal = 0
-users_getal = 0
+users_getal = 1
 
 for city in CITIES:
     for user in USERS[city]:
-            yes = pd.DataFrame(itembased.itembase(user['user_id']))[:10]
-            listi = list(yes['business_id'])
-            random_business = random.choice(listi)
-
-            users_getal += mse(user["user_id"], random_business, city)[1]
-            mse_getal += mse(user["user_id"], random_business, city)[0] * mse(user["user_id"], random_business, city)[1]
-            print(mse_getal/users_getal)
+        x, y = itembased.itembase(user['user_id'])
+        yes = pd.DataFrame(y)[:10]
+        random_business = random.sample(list(yes['business_id']), 1)[0]
+        a, b = mse(user["user_id"], random_business, city)
+        users_getal += b
+        if not np.isnan(a):
+            mse_getal += a * b
+            print(user["user_id"], mse_getal/users_getal)
+            
 
 print(mse_getal/users_getal)
