@@ -3,8 +3,6 @@ import pandas as pd
 import numpy as np
 import random
 
-import random
-
 def mse(frame):
     difference = frame['stars'] - frame['random_ratings']
     return (difference**2).mean()
