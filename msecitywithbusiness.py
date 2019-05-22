@@ -5,7 +5,7 @@ import itembased
 import random
 import numpy as np
 
-"""computes the content + item based mse of the complete city"""
+"""computes the content based with item based mse of the complete city"""
 
 mse_getal = 0
 users_getal = 1

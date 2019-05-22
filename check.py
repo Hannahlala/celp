@@ -26,7 +26,6 @@ def all_ratings_user(user_id):
 
 def ratings_together(user_id, business_id=None, city=None):
     """creates dataframe with actual and predicted review"""
-
     if not business_id:
         allpredicted = test1(user_id)
         realreview = all_ratings_user(user_id)

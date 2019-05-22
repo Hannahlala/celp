@@ -20,7 +20,6 @@ def recommend(user_id=None, business_id=None, city=None, n=10):
             adress:str
         }
     """
-
     if not user_id:
         if not business_id:
             return logout_without_business(city, n)
@@ -76,7 +75,7 @@ def login_with_business(user_id, business_id, city, n):
     return x[:n]
 
 def filtering_not_city():
-    " Filtering data if there's no city"
+    """filtering data if there's no city"""
     filtered_data = []
 
     for city in CITIES:
@@ -87,7 +86,7 @@ def filtering_not_city():
     return filtered_data
 
 def filtering_city():
-    " Filtering data if there's a city"
+    """filtering data if there's a city"""
     filtered_data = []
 
     for business in BUSINESSES[city]:

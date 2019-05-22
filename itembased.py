@@ -75,7 +75,6 @@ def get_review(reviews, userId, BusinessId):
 
 def pivot_reviews(reviews):
     """takes a review table as input and computes the utility matrix"""
-
     businessIds = reviews['business_id'].unique()
     userIds = reviews['user_id'].unique()
 
