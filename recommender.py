@@ -60,14 +60,16 @@ def logout_with_business(business_id, city, n):
     # get categories from specific business
     for business1 in BUSINESSES[city]:
         if business1["business_id"] == business_id:
-            business_cat = business1["categories"].split(', ')
+            if business1['categories'] != None:
+                business_cat = business1["categories"].split(', ')
 
     # check if categories match with other businesses
     filtered_data = []
     for business2 in BUSINESSES[city]:
         if business2['business_id'] != business_id:
-            if any(x in business2["categories"].split(', ') for x in business_cat):
-                filtered_data.append(business2)
+            if business2['categories'] != None:
+                if any(x in business2["categories"].split(', ') for x in business_cat):
+                    filtered_data.append(business2)
 
     sorted_data = sorted(filtered_data, key=itemgetter('stars'), reverse=True)
 

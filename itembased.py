@@ -11,17 +11,20 @@ import math
 def incl_city_business(user_id, business_id, city):
     """creates combination of item based and content based recommender system"""
     frame1 = pd.concat([pd.DataFrame(REVIEWS[x]) for x in REVIEWS if x == city])
+
     businesses = pd.DataFrame()
 
     for business1 in BUSINESSES[city]:
         if business1["business_id"] == business_id:
-            business_cat = business1["categories"].split(', ')
+            if business2['categories'] != None:
+                business_cat = business1["categories"].split(', ')
 
     for business2 in BUSINESSES[city]:
         if business2['business_id'] != business_id:
             if business2['is_open'] == 1 and business2['review_count'] > 9:
-                if any(x in business2["categories"].split(', ') for x in business_cat):
-                    businesses = businesses.append(business2, ignore_index=True)
+                if business2['categories'] != None:
+                    if any(x in business2["categories"].split(', ') for x in business_cat):
+                        businesses = businesses.append(business2, ignore_index=True)
 
     # drop first reviews when user reviewed company more then once
     frame2 = frame1.drop_duplicates(subset=["user_id","business_id"], keep='last', inplace=False)

@@ -42,8 +42,13 @@ def ratings_together(user_id, business_id=None, city=None):
 
 def mse(user_id, business_id=None, city=None):
     """computes the mean square error between actual ratings and predicted ratings"""
-
-    allpredicted = ratings_together(user_id, business_id=None, city=None)
-    diff = allpredicted['stars_y'] - allpredicted['predicted rating']
-    length_reviews_user = len(diff)
-    return [(diff ** 2).mean(), length_reviews_user]
+    if not business_id:
+        allpredicted = ratings_together(user_id)
+        diff = allpredicted['stars_y'] - allpredicted['predicted rating']
+        length_reviews_user = len(diff)
+        return [(diff ** 2).mean(), length_reviews_user]
+    else:
+        allpredicted = ratings_together(user_id, business_id, city)
+        diff = allpredicted['stars_y'] - allpredicted['predicted rating']
+        length_reviews_user = len(diff)
+        return [(diff ** 2).mean(), length_reviews_user]
