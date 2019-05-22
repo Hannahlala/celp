@@ -6,6 +6,7 @@ import pandas as pd
 
 
 def start(user_id, business_id=None, city=None):
+    "Initiates the functions and calculates mse"
     if not business_id:
         return mse(user_id)
     else:
@@ -13,16 +14,19 @@ def start(user_id, business_id=None, city=None):
 
 
 def test1(user_id):
+    "Refers to itembased predictions"
     x, y = itembased.itembase(user_id=user_id)
     return pd.DataFrame(y)
 
 
 def test2(user_id, business_id, city):
+    "Refers to item and content based predictions"
     x, y = itembased.incl_city_business(user_id=user_id, business_id=business_id, city=city)
     return pd.DataFrame(y)
 
 
 def all_ratings_user(user_id):
+    " Shows all the rows when users reviews business(es)"
     frame = pd.concat([pd.DataFrame(REVIEWS[x]) for x in REVIEWS])
     condition = frame["user_id"] == user_id
     correct_user = frame.loc[condition]
@@ -47,11 +51,9 @@ def mse(user_id, business_id=None, city=None):
         allpredicted = ratings_together(user_id)
         diff = allpredicted['stars_y'] - allpredicted['predicted rating']
         length_reviews_user = len(diff)
-
         return [(diff ** 2).mean(), length_reviews_user]
     else:
         allpredicted = ratings_together(user_id, business_id, city)
         diff = allpredicted['stars_y'] - allpredicted['predicted rating']
         length_reviews_user = len(diff)
-
         return [(diff ** 2).mean(), length_reviews_user]
