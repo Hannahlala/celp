@@ -16,7 +16,7 @@ def incl_city_business(user_id, business_id, city):
 
     for business1 in BUSINESSES[city]:
         if business1["business_id"] == business_id:
-            if business2['categories'] != None:
+            if business1['categories'] != None:
                 business_cat = business1["categories"].split(', ')
 
     for business2 in BUSINESSES[city]:
