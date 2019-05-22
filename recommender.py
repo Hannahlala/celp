@@ -21,22 +21,15 @@ def recommend(user_id=None, business_id=None, city=None, n=10):
         }
     """
 
-    # user_id isn't given
     if not user_id:
-        # business_id isn't given
         if not business_id:
             return logout_without_business(city, n)
-        # business_id is given
         else:
             return logout_with_business(business_id, city, n)
 
-    # user_id is given
-    # runs tests
     else:
-        # business_id isn't given
         if not business_id:
             return login_without_business(user_id, n)
-        # business_id is given
         else:
             return login_with_business(user_id, business_id, city, n)
         
@@ -45,8 +38,7 @@ def recommend(user_id=None, business_id=None, city=None, n=10):
 def logout_without_business(city, n):
     """filter all data and sort by highest stars"""
     if not city:
-        filtered_data = filtering_not_city()    
-    
+        filtered_data = filtering_not_city()
     else:
         filtered_data = filtering_city()
 
@@ -59,17 +51,15 @@ def logout_with_business(business_id, city, n):
 
     # get categories from specific business
     for business1 in BUSINESSES[city]:
-        if business1["business_id"] == business_id:
-            if business1['categories'] != None:
-                business_cat = business1["categories"].split(', ')
+        if business1["business_id"] == business_id and business1['categories'] is not None:
+            business_cat = business1["categories"].split(', ')
 
     # check if categories match with other businesses
     filtered_data = []
     for business2 in BUSINESSES[city]:
-        if business2['business_id'] != business_id:
-            if business2['categories'] != None:
-                if any(x in business2["categories"].split(', ') for x in business_cat):
-                    filtered_data.append(business2)
+        if business2['business_id'] != business_id and business2['categories'] is not None:
+            if any(x in business2["categories"].split(', ') for x in business_cat):
+                filtered_data.append(business2)
 
     sorted_data = sorted(filtered_data, key=itemgetter('stars'), reverse=True)
 
@@ -89,18 +79,19 @@ def filtering_not_city():
     " Filtering data if there's no city"
     filtered_data = []
 
-    for place in CITIES:
-            for business in BUSINESSES[place]:
-                if business['is_open'] == 1 and business['review_count'] > 9:
-                    filtered_data.append(business)
+    for city in CITIES:
+        for business in BUSINESSES[city]:
+            if business['is_open'] == 1 and business['review_count'] > 9:
+                filtered_data.append(business)
+
     return filtered_data
 
 def filtering_city():
     " Filtering data if there's a city"
     filtered_data = []
 
-    for business in BUSINESSES[place]:
+    for business in BUSINESSES[city]:
         if business['is_open'] == 1 and business['review_count'] > 9:
             filtered_data.append(business)
+
     return filtered_data
-    

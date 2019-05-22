@@ -5,6 +5,8 @@ import itembased
 import random
 import numpy as np
 
+"""computes the content + item based mse of the complete city"""
+
 mse_getal = 0
 users_getal = 1
 
@@ -21,4 +23,4 @@ for city in CITIES:
             print(user["user_id"], mse_getal/users_getal)
             
 
-print(mse_getal/users_getal)
+print(mse_getal/(users_getal-1))

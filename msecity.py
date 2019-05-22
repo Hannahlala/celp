@@ -2,6 +2,8 @@ from data import CITIES, BUSINESSES, USERS, REVIEWS, TIPS, CHECKINS
 from check import mse
 import numpy as np
 
+"""computes the item based mse of the complete city"""
+
 mse_getal = 0
 users_getal = 1
 
