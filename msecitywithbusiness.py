@@ -12,7 +12,9 @@ for city in CITIES:
     for user in USERS[city]:
         x, y = itembased.itembase(user['user_id'])
         yes = pd.DataFrame(y)[:10]
+        
         random_business = random.sample(list(yes['business_id']), 1)[0]
+        print(list(yes['business_id']), random_business)
         a, b = mse(user["user_id"], random_business, city)
         users_getal += b
         if not np.isnan(a):

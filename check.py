@@ -15,7 +15,8 @@ def test1(user_id):
     return pd.DataFrame(y)
 
 def test2(user_id, business_id, city):
-    return pd.DataFrame(incl_city_business(user_id=user_id, business_id=business_id, city=city))
+    x, y = itembased.incl_city_business(user_id=user_id, business_id=business_id, city=city)
+    return pd.DataFrame(y)
 
 
 def all_ratings_user(user_id):
