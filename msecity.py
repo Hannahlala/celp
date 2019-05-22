@@ -1,4 +1,4 @@
-from data import CITIES, BUSINESSES, USERS, REVIEWS, TIPS, CHECKINS
+from data import CITIES, USERS
 from check import mse
 import numpy as np
 
@@ -12,7 +12,7 @@ for city in CITIES:
         a, b = mse(user["user_id"])
         users_getal += b
         if not np.isnan(a):
-                mse_getal += a * b
-                print(user["user_id"],mse_getal/users_getal)
+            mse_getal += a * b
+            print(user["user_id"], mse_getal / users_getal)
 
-print(mse_getal/(users_getal-1))
+print(mse_getal / (users_getal - 1))

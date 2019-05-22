@@ -1,6 +1,9 @@
-import pandas as pd
-import itembased
 from data import REVIEWS
+import itembased
+import pandas as pd
+
+
+
 
 def start(user_id, business_id=None, city=None):
     if not business_id:
@@ -8,9 +11,11 @@ def start(user_id, business_id=None, city=None):
     else:
         return mse(user_id, business_id, city)
 
+
 def test1(user_id):
     x, y = itembased.itembase(user_id=user_id)
     return pd.DataFrame(y)
+
 
 def test2(user_id, business_id, city):
     x, y = itembased.incl_city_business(user_id=user_id, business_id=business_id, city=city)
@@ -34,6 +39,7 @@ def ratings_together(user_id, business_id=None, city=None):
         allpredicted = test2(user_id, business_id, city)
         realreview = all_ratings_user(user_id)
         return pd.merge(allpredicted, realreview, on='business_id')
+
 
 def mse(user_id, business_id=None, city=None):
     """computes the mean square error between actual ratings and predicted ratings"""
